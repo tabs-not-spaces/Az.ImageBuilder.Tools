@@ -1,3 +1,6 @@
+<#
+.EXTERNALHELP Az.ImageBuilder.Tools-help.xml
+#>
 function New-AIBRole {
     [cmdletbinding()]
     param (

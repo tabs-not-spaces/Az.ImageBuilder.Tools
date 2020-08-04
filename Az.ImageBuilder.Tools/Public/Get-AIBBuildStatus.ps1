@@ -1,3 +1,6 @@
+<#
+.EXTERNALHELP Az.ImageBuilder.Tools-help.xml
+#>
 function Get-AIBBuildStatus {
     [cmdletbinding()]
     param (

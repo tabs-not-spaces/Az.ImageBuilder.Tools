@@ -1,3 +1,6 @@
+<#
+.EXTERNALHELP Az.ImageBuilder.Tools-help.xml
+#>
 Function Invoke-AIBProviderCheck {
     [cmdletbinding()]
     param (
