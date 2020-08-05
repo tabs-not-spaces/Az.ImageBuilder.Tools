@@ -13,7 +13,7 @@ Helper function to check for and register relevant Resource Providers and Featur
 ## SYNTAX
 
 ```
-Invoke-AIBProviderCheck [-Wait] [<CommonParameters>]
+Invoke-AIBProviderCheck [[-AZResourceProviders] <Array>] [-Wait] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -22,14 +22,16 @@ Helper function to check for and register relevant Resource Providers and Featur
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\> Invoke-AIBProviderCheck -Wait
 ```
 
-This will verify the state of all required providers and will register any that are set to "NotRegistered". Using the wait switch will cause the function to re-run every 30 seconds until all registration states are "Registered". This process can take up to 10-15 minutes to complete, so using the wait switch can be helpful.
+This will verify the state of all required providers and will register any that are set to "NotRegistered".
+Using the wait switch will cause the function to re-run every 30 seconds until all registration states are "Registered".
+This process can take up to 10-15 minutes to complete, so using the wait switch can be helpful.
 
 ### Example 2
-```powershell
+```
 PS C:\> Invoke-AIBProviderCheck
 ```
 
@@ -53,7 +55,9 @@ Accept wildcard characters: False
 ```
 
 ### -Wait
-Forces the function to wait until all providers return "registered" for their registration state. Can take a while. Go grab a coffee - take a load off.
+Forces the function to wait until all providers return "registered" for their registration state.
+Can take a while.
+Go grab a coffee - take a load off.
 
 ```yaml
 Type: SwitchParameter
@@ -62,7 +66,7 @@ Aliases:
 
 Required: False
 Position: Named
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -73,7 +77,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### System.Object

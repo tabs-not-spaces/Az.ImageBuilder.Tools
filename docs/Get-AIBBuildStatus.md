@@ -11,8 +11,10 @@ schema: 2.0.0
 Check on your build status!
 
 ## SYNTAX
+
 ```
-Get-AIBBuildStatus [-AzureContext] <Microsoft.Azure.Commands.Profile.Models.Core.PSAzureContext> [-ResourceGroupName] <Object> [-ImageTemplateName] <String> [<CommonParameters>]
+Get-AIBBuildStatus [-AzureContext] <PSAzureContext> [-ResourceGroupName] <String> [-ImageTemplateName] <String>
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -21,7 +23,7 @@ Check on your build status!
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\> Get-AIBBuildStatus -AzureContext (Get-AzContext) -ResourceGroupName "AIBResourceGroup" -ImageTemplateName "HellaCoolTemplate"
 ```
 
@@ -30,10 +32,11 @@ This will return the build status metadata in JSON format.
 ## PARAMETERS
 
 ### -AzureContext
-Everything needs context. Store your AzureContext here.
+Everything needs context.
+Store your AzureContext here.
 
 ```yaml
-Type: Microsoft.Azure.Commands.Profile.Models.Core.PSAzureContext
+Type: PSAzureContext
 Parameter Sets: (All)
 Aliases:
 
@@ -45,7 +48,9 @@ Accept wildcard characters: False
 ```
 
 ### -ResourceGroupName
-What are we calling the resource group? Slap it in here. I'll do the rest.
+What are we calling the resource group?
+Slap it in here.
+I'll do the rest.
 
 ```yaml
 Type: String
@@ -63,7 +68,7 @@ Accept wildcard characters: False
 Whats the name of the custom template you want to check on?
 
 ```yaml
-Type: Object
+Type: String
 Parameter Sets: (All)
 Aliases:
 
@@ -80,7 +85,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### System.Object
