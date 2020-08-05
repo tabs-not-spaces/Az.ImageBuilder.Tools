@@ -27,26 +27,10 @@ $imageConfig = @{
     Install-Module -Name $_ -AllowPrerelease
 }
 #endregion
+
 #region Resource Group / Managed Identify config
-#region Make sure all relevant providers are registered in tenant - this can take up to 15 minutes or so.
-Write-Host "Registering relevnat providers.." -ForegroundColor Yellow
-Invoke-AIBProviderCheck -Wait
+$managedIdentity = Initialize-AzureImageBuilder -AzureContext $azContext -ResourceGroupName $imageResourceGroup -IdentityName "aibIdentity"
 #endregion
-
-#region Set up resource group if missing
-Write-Host "Creating resource group.." -ForegroundColor Yellow
-New-AIBResourceGroup -ResourceGroupName $imageResourceGroup -Location $location -Force
-#endregion
-
-#region Create managed identity and assign custom roles.
-Write-Host "Creating managed identity.." -ForegroundColor Yellow
-$managedIdentity = New-AIBManagedIdentity -ResourceGroupName $imageResourceGroup -IdentityName 'aibIdentity'
-
-Write-Host "Creating AIB Roles & assigning to managed identity.." -ForegroundColor Yellow
-New-AIBRole -AzureContext $azContext -ResourceGroupName $imageResourceGroup -ManagedIdentity $managedIdentity
-#endregion
-#endregion
-
 
 #region Create the shared image gallery (SIG)
 $azGalleryParams = @{
