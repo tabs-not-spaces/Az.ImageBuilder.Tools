@@ -16,16 +16,18 @@ function New-AIBManagedIdentity {
         Write-Host "Managed identity $IdentityName`: " -ForegroundColor Cyan -NoNewline
         if ( !(Get-AzUserAssignedIdentity -ResourceGroupName $ResourceGroupName -Name $IdentityName -ErrorAction SilentlyContinue)) {
             Write-Host "$script:tick Creating.." -ForegroundColor Green
-            New-AzUserAssignedIdentity -ResourceGroupName $ResourceGroupName -Name $IdentityName
+            $id = New-AzUserAssignedIdentity -ResourceGroupName $ResourceGroupName -Name $IdentityName
         }
         else {
             Write-Host "$script:tick Found.." -ForegroundColor Green
         }
-        $identity = Get-AzUserAssignedIdentity -ResourceGroupName $ResourceGroupName -Name $IdentityName
+        if (!($id)) {
+            $id = Get-AzUserAssignedIdentity -ResourceGroupName $ResourceGroupName -Name $IdentityName
+        }
         $res = [PSCustomObject]@{
-            Name = $IdentityName
-            ResourceId  = $identity.Id
-            PrincipalID = $identity.PrincipalId
+            Name        = $id.Name
+            ResourceId  = $id.Id
+            PrincipalID = $id.PrincipalId
         }
         Write-Host
         return $res

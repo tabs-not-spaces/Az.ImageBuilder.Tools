@@ -11,12 +11,20 @@ function Get-AIBBuildStatus {
         [string]$ResourceGroupName,
 
         [Parameter(Mandatory = $true)]
-        [string]$ImageTemplateName
+        [string]$ImageTemplateName,
+
+        [Parameter(Mandatory = $false)]
+        [switch]$fullStatus
     )
     $accessToken = Get-AzCachedAccessToken -AzureContext $AzureContext
     $managementEp = $AzureContext.Environment.ResourceManagerUrl
     $urlBuildStatus = [System.String]::Format("{0}subscriptions/{1}/resourceGroups/$ResourceGroupName/providers/Microsoft.VirtualMachineImages/imageTemplates/{2}?api-version=2020-02-14", $managementEp, $AzureContext.Subscription.Id, $ImageTemplateName)
     $buildStatusResult = Invoke-WebRequest -Method GET  -Uri $urlBuildStatus -UseBasicParsing -Headers  @{"Authorization" = ("Bearer " + $accessToken) } -ContentType application/json
-    $buildJsonStatus = $buildStatusResult.Content
-    $buildJsonStatus
+    $buildJsonStatus = $buildStatusResult.Content | ConvertFrom-Json
+    if ($fullStatus) {
+        $buildJsonStatus
+    }
+    else {
+        $buildJsonStatus.properties.lastRunStatus
+    }
 }
