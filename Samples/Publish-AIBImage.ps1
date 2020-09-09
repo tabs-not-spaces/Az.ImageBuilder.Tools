@@ -5,24 +5,25 @@ $subscriptionID = $azContext.Subscription.Id
 #endregion
 
 #region Configure variables
-$resourceGroupName      = 'wvd-o365-images'
-$location               = 'eastus'
-$imageTemplateName      = 'wvd-20h1-test'
-$sharedGalleryName      = 'AIBSIG'
-$imageDefinitionName    = 'win0365'
-$runOutputName          = 'aibCustomWinManImg02ro' # Image distribution metadata reference name
-$runOutputName          = 'winClientR01' # This gives you the properties of the managed image on completion.
+$resourceGroupName = 'AzImageBuilderRG'
+$location = 'eastus'
+$imageTemplateName = 'wvd-20h1-prebuilt'
+$sharedGalleryName = 'AIBSIG'
+$imageDefinitionName = 'M365MMM'
+$runOutputName = 'aibCustomWinManImg02ro' # Image distribution metadata reference name
+$runOutputName = 'winClientR01' # This gives you the properties of the managed image on completion.
 $imageConfig = @{
-    OsState             = 'generalized'
-    OsType              = 'Windows'
-    Publisher           = 'MicrosoftWindowsDesktop'
-    Offer               = 'office-365'
-    Sku                 = '20h1-evd-o365pp'
-    Version             = 'latest'
+    OsState   = 'generalized'
+    OsType    = 'Windows'
+    Publisher = 'MicrosoftWindowsDesktop'
+    Offer     = 'office-365'
+    Sku       = '20h1-evd-o365pp'
+    Version   = 'latest'
 }
 ## shared image gallery vars
 
 #region Required modules
+Install-Module Az.ImageBuilder.Tools
 Import-Module Az.ImageBuilder.Tools
 'Az.ImageBuilder', 'Az.ManagedServiceIdentity' | ForEach-Object {
     Install-Module -Name $_ -AllowPrerelease
@@ -89,9 +90,10 @@ $disSharedImg = New-AzImageBuilderDistributorObject @distObjParams
 #region Build customization object
 $imgCustomParams = @{
     PowerShellCustomizer = $true
-    CustomizerName       = 'settingUpMgmtAgtPath'
-    RunElevated          = $false
-    Inline               = @("mkdir c:\\buildActions", "echo Azure-Image-Builder-Was-Here  > c:\\buildActions\\buildActionsOutput.txt")
+    CustomizerName       = 'MountAppShareAndRunInstaller'
+    RunElevated          = $true
+    scriptUri            = 'https://pwshappstorage.blob.core.windows.net/scripts/AppInstall.ps1'
+    sha256Checksum       = 'E51DE5E8E3EFCC94269FB55567A08E4679E07AF57726860D7145278AAE910445'
 }
 $customizer = New-AzImageBuilderCustomizerObject @imgCustomParams
 #endregion
@@ -110,6 +112,10 @@ New-AzImageBuilderTemplate @ImgTemplateParams
 #endregion
 
 #region Start image build
-$job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name $imageTemplateName -AsJob
-$job
+$job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name $imageTemplateName
+# wait for the job status to complete
+
+Get-AIBBuildStatus -AzureContext $azContext -ResourceGroupName $resourceGroupName -ImageTemplateName $imageTemplateName -fullStatus
 #endregion
+
+
