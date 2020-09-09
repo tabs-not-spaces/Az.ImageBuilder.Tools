@@ -1,4 +1,4 @@
-# AzureImageBuilder
+# Az.ImageBuilder.Tools
 Azure Image Builder configuration done right(ish).
 
 ## What have we got here?
