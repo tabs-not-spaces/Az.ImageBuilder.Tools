@@ -1,15 +1,13 @@
+Write-Host "Adding credentials for storage account.."
 . cmdkey /add 'pwshappstorage.file.core.windows.net' /user:'Azure\pwshappstorage' /pass:'PploDc80SSHV5NMe87HpYMmVC+SYbZyWvghyGEa+yuR9wNGym+2ieXFxiYtTO/SChpn+fb9hiEQ0sBkFPRdwcg=='
 New-SmbMapping -LocalPath 'Z:' -RemotePath '\\pwshappstorage.file.core.windows.net\appstore' -Persistent $true
+Write-Host "Creating staging directory"
 New-Item -Path 'C:\ProgramData\AIBStaging' -ItemType Directory -Force
+Write-Host "Copying media"
 Copy-Item -Path 'Z:\apps\7zip.msi' -Destination 'C:\ProgramData\AIBStaging\7zip.msi' -Force
-#region create staging directory
-$stagingDir = "$env:ProgramData\AIBStaging"
-if (!(Test-Path $stagingDir -ErrorAction SilentlyContinue)) {
-    New-Item -Path $stagingDir -ItemType Directory -Force | Out-Null
-}
-#endregion
 
 #region Some fancy Teams media settings for WVD
+Write-Host "Apply teams registry keys"
 New-Item -Path HKLM:\SOFTWARE\Microsoft\Teams -Force | Out-Null
 New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Teams -name IsWVDEnvironment -Value "1" -Force | Out-Null
 #endregion
@@ -34,13 +32,19 @@ $params = @(
     }
 )
 foreach ($param in $params) {
-    Invoke-WebRequest @param -Use
+    Write-Host "downloading installation media from $($param.uri)"
+    Invoke-WebRequest @param
 }
 #endregion
 #region Install all the things
+Write-Host "Installing vs runtimes.."
 Start-Process -FilePath "$stagingDir\vs.exe" -ArgumentList "/quiet" -Wait 
+Write-Host "Installing websocket.."
 Start-Process -FilePath msiexec -ArgumentList "/i `"$stagingDir\websocket.msi`" /qn" -Wait
+Write-Host "Installing teams.."
 Start-Process -FilePath msiexec -ArgumentList "/i `"$stagingDir\\Teams.msi`" /quiet /l*v C`"$stagingDir\teamsinstall.log`" ALLUSER=1 ALLUSERS=1" -Wait
+Write-Host "Installing edge.."
 Start-Process -FilePath msiexec -ArgumentList "/i `"$stagingDir\EdgeEnt.msi`" /qn" -Wait
+Write-Host "Installing 7zip.."
 Start-Process -FilePath msiexec -ArgumentList "/i `"$stagingDir\7zip.msi`" /qn" -Wait
 #endregion
