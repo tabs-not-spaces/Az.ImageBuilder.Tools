@@ -5,6 +5,7 @@ Write-Host "Creating staging directory"
 New-Item -Path 'C:\ProgramData\AIBStaging' -ItemType Directory -Force
 Write-Host "Copying media"
 Copy-Item -Path 'Z:\apps\7zip.msi' -Destination 'C:\ProgramData\AIBStaging\7zip.msi' -Force
+$stagingDir = "C:\ProgramData\AIBStaging"
 
 #region Some fancy Teams media settings for WVD
 Write-Host "Apply teams registry keys"
@@ -38,7 +39,7 @@ foreach ($param in $params) {
 #endregion
 #region Install all the things
 Write-Host "Installing vs runtimes.."
-Start-Process -FilePath "$stagingDir\vs.exe" -ArgumentList "/quiet" -Wait 
+Start-Process -FilePath "$stagingDir\vc.exe" -ArgumentList "/quiet" -Wait 
 Write-Host "Installing websocket.."
 Start-Process -FilePath msiexec -ArgumentList "/i `"$stagingDir\websocket.msi`" /qn" -Wait
 Write-Host "Installing teams.."
