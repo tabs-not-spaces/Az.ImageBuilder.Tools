@@ -5,12 +5,11 @@ $subscriptionID = $azContext.Subscription.Id
 #endregion
 
 #region Configure variables
-$resourceGroupName = 'AzImageBuilderRG'
+$resourceGroupName = 'AzImageBuilderM365MMM-live'
 $location = 'eastus'
-$imageTemplateName = 'wvd-20h1-prebuilt'
-$sharedGalleryName = 'AIBSIG'
-$imageDefinitionName = 'M365MMM'
-$runOutputName = 'aibCustomWinManImg02ro' # Image distribution metadata reference name
+$imageTemplateName = 'wvd-20h1-prebuiltM365MMM-live'
+$sharedGalleryName = 'M365MMMSIGlive'
+$imageDefinitionName = 'M365MMMlive'
 $runOutputName = 'winClientR01' # This gives you the properties of the managed image on completion.
 $imageConfig = @{
     OsState   = 'generalized'
@@ -92,8 +91,7 @@ $imgCustomParams = @{
     PowerShellCustomizer = $true
     CustomizerName       = 'MountAppShareAndRunInstaller'
     RunElevated          = $true
-    scriptUri            = 'https://pwshappstorage.blob.core.windows.net/scripts/AppInstall.ps1'
-    sha256Checksum       = 'E51DE5E8E3EFCC94269FB55567A08E4679E07AF57726860D7145278AAE910445'
+    scriptUri            = 'https://raw.githubusercontent.com/tabs-not-spaces/Az.ImageBuilder.Tools/master/Samples/AppInstall.ps1'
 }
 $customizer = New-AzImageBuilderCustomizerObject @imgCustomParams
 #endregion
@@ -109,13 +107,16 @@ $imgTemplateParams = @{
     UserAssignedIdentityId = $managedIdentity.ResourceId
 }
 New-AzImageBuilderTemplate @ImgTemplateParams
+
+Get-AzImageBuilderTemplate -ImageTemplateName $imageTemplateName -ResourceGroupName $resourceGroupName | Select-Object *  
 #endregion
 
 #region Start image build
-$job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name $imageTemplateName
+$job = Start-AzImageBuilderTemplate -ResourceGroupName $resourceGroupName -Name $imageTemplateName -AsJob
+$job
 # wait for the job status to complete
 
-Get-AIBBuildStatus -AzureContext $azContext -ResourceGroupName $resourceGroupName -ImageTemplateName $imageTemplateName -fullStatus
+Get-AIBBuildStatus -AzureContext $azContext -ResourceGroupName $resourceGroupName -ImageTemplateName $imageTemplateName
 #endregion
 
 

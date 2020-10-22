@@ -1,5 +1,5 @@
 Write-Host "Adding credentials for storage account.."
-. cmdkey /add 'pwshappstorage.file.core.windows.net' /user:'Azure\pwshappstorage' /pass:'PploDc80SSHV5NMe87HpYMmVC+SYbZyWvghyGEa+yuR9wNGym+2ieXFxiYtTO/SChpn+fb9hiEQ0sBkFPRdwcg=='
+. cmdkey /add 'pwshappstorage.file.core.windows.net' /user:'Azure\pwshappstorage' /pass:'...'
 New-SmbMapping -LocalPath 'Z:' -RemotePath '\\pwshappstorage.file.core.windows.net\appstore' -Persistent $true
 Write-Host "Creating staging directory"
 New-Item -Path 'C:\ProgramData\AIBStaging' -ItemType Directory -Force
